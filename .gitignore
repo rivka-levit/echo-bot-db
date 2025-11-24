@@ -151,6 +151,13 @@ pyrightconfig.json
 # VSCode
 .vscode/
 
+# Redis
+.redis_data/
+
+# PostgreSQL
+.postgres_data/
+.pgadmin_data/
+
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
