@@ -37,10 +37,23 @@ async def log_db_version(connection: AsyncConnection) -> None:
 
 
 async def get_pg_connection(
-        db_name,
-        host,
-        port,
-        user,
-        password,
-):
-    pass
+    db_name: str,
+    host: str,
+    port: int,
+    user: str,
+    password: str,
+) -> AsyncConnection:
+    """Return a PostgreSQL connection."""
+
+    conninfo = build_pg_conninfo(db_name, host, port, user, password)
+    connection: AsyncConnection | None = None
+
+    try:
+        connection = await AsyncConnection.connect(conninfo=conninfo)
+        await log_db_version(connection)
+        return connection
+    except Exception as e:
+        logger.exception("Failed to connect to PostgreSQL: %s", e)
+        if connection:
+            await connection.close()
+        raise
