@@ -24,6 +24,18 @@ def build_pg_conninfo(
     return conninfo
 
 
+async def log_db_version(connection: AsyncConnection) -> None:
+    """Log the version of the database."""
+
+    try:
+        async with connection.cursor() as cursor:
+            await cursor.execute("SELECT version();")
+            db_version = await cursor.fetchone()
+            logger.info(f"Connected to PostgreSQL version: {db_version[0]}")
+    except Exception as e:
+        logger.warning("Failed to fetch DB version: %s", e)
+
+
 async def get_pg_connection(
         db_name,
         host,
