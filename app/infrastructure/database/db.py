@@ -81,3 +81,24 @@ async def get_user(
         logger.info("Row is %s", row)
 
         return row if row else None
+
+
+async def change_user_alive_status(
+    conn: AsyncConnection,
+    *,
+    is_alive: bool,
+    user_id: int,
+) -> None:
+    """Change the user's alive status."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  UPDATE users
+                  SET is_alive = %s
+                  WHERE user_id = %s;
+                  """,
+            params=(is_alive, user_id)
+        )
+        logger.info("Updated `is_alive` status to `%s` for user %d",
+                    is_alive, user_id)
