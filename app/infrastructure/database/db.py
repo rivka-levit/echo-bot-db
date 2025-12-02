@@ -102,3 +102,44 @@ async def change_user_alive_status(
         )
         logger.info("Updated `is_alive` status to `%s` for user %d",
                     is_alive, user_id)
+
+
+async def change_user_banned_status_by_id(
+    conn: AsyncConnection,
+    *,
+    banned: bool,
+    user_id: int,
+) -> None:
+    """Change the user's banned status by id."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  UPDATE users
+                  SET banned = %s
+                  WHERE user_id = %s
+                  """,
+            params=(banned, user_id)
+        )
+    logger.info("Updated `banned` status to `%s` for user %d", banned, user_id)
+
+
+async def change_user_banned_status_by_username(
+    conn: AsyncConnection,
+    *,
+    banned: bool,
+    username: str,
+) -> None:
+    """Change the user's banned status by username."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  UPDATE users
+                  SET banned = %s
+                  WHERE username = %s
+                  """,
+            params=(banned, username)
+        )
+    logger.info("Updated `banned` status to `%s` for username %s",
+                banned, username)
