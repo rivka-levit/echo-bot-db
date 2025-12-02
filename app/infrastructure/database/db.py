@@ -52,3 +52,32 @@ async def add_user(
             is_alive,
             banned,
         )
+
+
+async def get_user(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> tuple[Any, ...] | None:
+    """Get a user from the database."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT id,
+                         user_id,
+                         username,
+                         language,
+                         role,
+                         is_alive,
+                         banned,
+                         created_at
+                  FROM users
+                  WHERE user_id = %s;
+                  """,
+            params=(user_id,),
+        )
+        row = await data.fetchone()
+        logger.info("Row is %s", row)
+
+        return row if row else None
