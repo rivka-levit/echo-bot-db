@@ -262,3 +262,36 @@ async def get_user_banned_status_by_username(
         )
 
     return row[0] if row else None
+
+
+async def get_user_role(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> UserRole | None:
+    """Get the user's role."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT role
+                  FROM users
+                  WHERE user_id = %s;
+                  """,
+            params=(user_id,),
+        )
+        row = await data.fetchone()
+
+    if row:
+        logger.info(
+            "The user with `user_id`=%s has the role is %s",
+            user_id,
+            row[0]
+        )
+    else:
+        logger.warning(
+            "No user with `user_id`=%s found in the database",
+            user_id
+        )
+
+    return UserRole(row[0]) if row else None
