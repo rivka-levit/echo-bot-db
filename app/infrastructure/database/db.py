@@ -143,3 +143,23 @@ async def change_user_banned_status_by_username(
         )
     logger.info("Updated `banned` status to `%s` for username %s",
                 banned, username)
+
+
+async def update_user_lang(
+    conn: AsyncConnection,
+    *,
+    language: str,
+    user_id: int,
+) -> None:
+    """Update the user's language."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  UPDATE users
+                  SET language = %s
+                  WHERE user_id = %s
+                  """,
+            params=(language, user_id)
+        )
+    logger.info("The language `%s` is set for the user `%s`", language, user_id)
