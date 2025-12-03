@@ -163,3 +163,36 @@ async def update_user_lang(
             params=(language, user_id)
         )
     logger.info("The language `%s` is set for the user `%s`", language, user_id)
+
+
+async def get_user_alive_status(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> bool | None:
+    """Get the user's alive status."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT is_alive
+                  FROM users
+                  WHERE user_id = %s;
+                  """,
+            params=(user_id,),
+        )
+        row = await data.fetchone()
+
+    if row:
+        logger.info(
+            "The user with `user_id`=%s has the is_alive status is %s",
+            user_id,
+            row[0]
+        )
+    else:
+        logger.warning(
+            "No user with `user_id`=%s found in the database",
+            user_id
+        )
+
+    return row[0] if row else None
