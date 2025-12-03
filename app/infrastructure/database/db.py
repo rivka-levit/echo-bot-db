@@ -196,3 +196,69 @@ async def get_user_alive_status(
         )
 
     return row[0] if row else None
+
+
+async def get_user_banned_status_by_id(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> bool | None:
+    """Get the user's banned status by id."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT banned
+                  FROM users
+                  WHERE user_id = %s;
+                  """,
+            params=(user_id,),
+        )
+        row = await data.fetchone()
+
+    if row:
+        logger.info(
+            "The user with `user_id`=%s has the banned status is %s",
+            user_id,
+            row[0]
+        )
+    else:
+        logger.warning(
+            "No user with `user_id`=%s found in the database",
+            user_id
+        )
+
+    return row[0] if row else None
+
+
+async def get_user_banned_status_by_username(
+    conn: AsyncConnection,
+    *,
+    username: str,
+) -> bool | None:
+    """Get the user's banned status by username."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT banned
+                  FROM users
+                  WHERE username = %s;
+                  """,
+            params=(username,),
+        )
+        row = await data.fetchone()
+
+    if row:
+        logger.info(
+            "The user with `username`=%s has the banned status is %s",
+            username,
+            row[0]
+        )
+    else:
+        logger.warning(
+            "No user with `username`=%s found in the database",
+            username
+        )
+
+    return row[0] if row else None
