@@ -319,3 +319,23 @@ async def add_user_activity(
         "User activity updated. table=`activity`, user_id=%d",
         user_id
     )
+
+
+async def get_statistics(conn: AsyncConnection) -> list[Any] | None:
+    """Get the user's statistics."""
+
+    async with conn.cursor() as cursor:
+        data = await cursor.execute(
+            query="""
+                  SELECT user_id, SUM(actions) AS total_actions
+                  FROM activity
+                  GROUP BY user_id
+                  ORDER BY total_actions DESC
+                  LIMIT 5;
+            """,
+        )
+        rows = await data.fetchall()
+
+    logger.info("Users activity got from table=`activity`")
+
+    return [*rows] if rows else None
