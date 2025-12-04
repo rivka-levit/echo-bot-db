@@ -295,3 +295,27 @@ async def get_user_role(
         )
 
     return UserRole(row[0]) if row else None
+
+
+async def add_user_activity(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> None:
+    """Add a user's activity value."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  INSERT INTO activity (user_id)
+                  VALUES (%s)
+                  ON CONFLICT (user_id, activity_date)
+                  DO UPDATE
+                  SET actions = activity.actions + 1;
+            """,
+            params=(user_id,),
+        )
+    logger.info(
+        "User activity updated. table=`activity`, user_id=%d",
+        user_id
+    )
