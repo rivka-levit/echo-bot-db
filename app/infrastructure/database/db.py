@@ -165,6 +165,39 @@ async def update_user_lang(
     logger.info("The language `%s` is set for the user `%s`", language, user_id)
 
 
+async def get_user_lang(
+    conn: AsyncConnection,
+    *,
+    user_id: int,
+) -> str | None:
+    """Get the user's language from the database."""
+
+    async with conn.cursor() as cursor:
+        await cursor.execute(
+            query="""
+                  SELECT language
+                  FROM users
+                  WHERE user_id = %s;
+            """,
+            params=(user_id,),
+        )
+        row = await cursor.fetchone()
+
+        if row:
+            logger.info(
+                "The user with `user_id`=%s has the language %s",
+                user_id,
+                row[0]
+            )
+        else:
+            logger.warning(
+                "No user with `user_id`=%s found in the database",
+                user_id
+            )
+
+        return row[0] if row else None
+
+
 async def get_user_alive_status(
     conn: AsyncConnection,
     *,
