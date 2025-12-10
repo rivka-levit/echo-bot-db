@@ -55,3 +55,29 @@ async def process_any_message_when_lang(
     )
 
     await state.update_data(lang_settings_msg_id=msg.message_id)
+
+
+@router.message(Command(commands=['lang']))
+async def process_lang_command(
+    message: Message,
+    conn: AsyncConnection,
+    i18n: dict[str, str],
+    state: FSMContext,
+    locales: list[str],
+):
+    """Handles command `/lang`."""
+
+    await state.set_state(LangSG.lang)
+    user_lang = await get_user_lang(conn, user_id=message.from_user.id)
+
+    msg = await message.answer(
+        text=i18n.get("/lang"),
+        reply_markup=get_lang_settings_kb(
+            i18n=i18n, locales=locales, checked=user_lang
+        )
+    )
+
+    await state.update_data(
+        lang_settings_msg_id=msg.message_id,
+        user_lang=user_lang
+    )
