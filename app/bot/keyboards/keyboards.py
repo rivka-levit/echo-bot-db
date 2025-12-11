@@ -13,7 +13,7 @@ def get_lang_settings_kb(
     for locale in sorted(locales):
         if locale == 'default':
             continue
-        if locale == 'checked':
+        if locale == checked:
             buttons.append(
                 [
                     InlineKeyboardButton(
