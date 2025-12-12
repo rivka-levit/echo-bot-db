@@ -13,10 +13,10 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BotCommandScopeChat, CallbackQuery, Message
 
-from app.bot.filters.filters import LocaleFilter
+from app.bot.filters import LocaleFilter
 from app.bot.keyboards.keyboards import get_lang_settings_kb
 from app.bot.keyboards.menu_button import get_main_menu_commands
-from app.bot.states.states import LangSG
+from app.bot.states import LangSG
 from app.infrastructure.database.db import (
     get_user_lang,
     get_user_role,
@@ -83,7 +83,7 @@ async def process_lang_command(
     )
 
 
-@router.callback_query(F.data=='save_lang_button_text')
+@router.callback_query(F.data=='save_lang_button_data')
 async def process_save_click(
         callback: CallbackQuery,
         bot: Bot,
@@ -108,6 +108,23 @@ async def process_save_click(
             type=BotCommandScopeType.CHAT,
             chat_id=callback.from_user.id
         )
+    )
+    await state.update_data(lang_settings_msg_id=None, user_lang=None)
+    await state.set_state()
+
+
+@router.callback_query(F.data=='cancel_lang_button_data')
+async def process_cancel_click(
+        callback: CallbackQuery,
+        conn: AsyncConnection,
+        i18n: dict[str, str],
+        state: FSMContext
+):
+    """Handles pressing `Cancel` button in lang choice state."""
+
+    user_lang = await get_user_lang(conn, user_id=callback.from_user.id)
+    await callback.message.edit_text(
+        text=i18n.get('lang_cancelled').format(i18n.get(user_lang))
     )
     await state.update_data(lang_settings_msg_id=None, user_lang=None)
     await state.set_state()
