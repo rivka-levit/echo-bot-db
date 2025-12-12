@@ -128,3 +128,22 @@ async def process_cancel_click(
     )
     await state.update_data(lang_settings_msg_id=None, user_lang=None)
     await state.set_state()
+
+
+@router.callback_query(LocaleFilter())
+async def process_lang_click(
+        callback: CallbackQuery,
+        i18n: dict[str, str],
+        locales: list[str]
+):
+    """Handles language button click in lang choice state."""
+
+    try:
+        await callback.message.edit_text(
+            text=i18n.get("/lang"),
+            reply_markup=get_lang_settings_kb(
+                i18n=i18n, locales=locales, checked=callback.data
+            ),
+        )
+    except TelegramBadRequest:
+        await callback.answer()
