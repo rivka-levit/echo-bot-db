@@ -28,3 +28,22 @@ async def process_admin_help_command(message: Message, i18n: dict):
     await message.answer(
         text=i18n.get('/help_admin')
     )
+
+
+@router.message(Command('statistics'))
+async def process_admin_statistics_command(
+        message: Message,
+        conn: AsyncConnection,
+        i18n: dict[str, str]
+):
+    """Handles `/statistics` command for users with role `ADMIN`"""
+
+    statistics = await get_statistics(conn)
+    await message.answer(
+        text=i18n.get('statistics').format(
+            '\n'.join(
+                f'{i}. <b>{stat[0]}</b>: {stat[1]}'
+                for i, stat in enumerate(statistics, 1)
+            )
+        )
+    )
