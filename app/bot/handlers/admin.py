@@ -47,3 +47,54 @@ async def process_admin_statistics_command(
             )
         )
     )
+
+
+@router.message(Command("ban"))
+async def process_ban_command(
+    message: Message,
+    command: CommandObject,
+    conn: AsyncConnection,
+    i18n: dict[str, str]
+) -> None:
+    """Handles `/ban` command for users with role `ADMIN`"""
+
+    args = command.args
+
+    if not args:
+        await message.reply(text=i18n.get('empty_ban_answer'))
+        return
+
+    arg_user = args.split()[0].strip()
+
+    if arg_user.isdigit():
+        banned_status = await get_user_banned_status_by_id(
+            conn,
+            user_id=int(arg_user)
+        )
+    elif arg_user.startswith('@'):
+        banned_status = await get_user_banned_status_by_username(
+            conn,
+            username=arg_user[1:]
+        )
+    else:
+        await message.reply(text=i18n.get('incorrect_ban_arg'))
+        return
+
+    if banned_status is None:
+        await message.reply(text=i18n.get('no_user'))
+    elif banned_status:
+        await message.reply(text=i18n.get('already_banned'))
+    else:
+        if arg_user.isdigit():
+            await change_user_banned_status_by_id(
+                conn,
+                banned=True,
+                user_id=int(arg_user)
+            )
+        else:
+            await change_user_banned_status_by_username(
+                conn,
+                banned=True,
+                username=arg_user[1:]
+            )
+        await message.reply(text=i18n.get('successfully_banned'))
