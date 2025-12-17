@@ -98,3 +98,54 @@ async def process_ban_command(
                 username=arg_user[1:]
             )
         await message.reply(text=i18n.get('successfully_banned'))
+
+
+@router.message(Command('unban'))
+async def process_unban_command(
+    message: Message,
+    command: CommandObject,
+    conn: AsyncConnection,
+    i18n: dict[str, str]
+) -> None:
+    """Handles `/unban` command for users with role `ADMIN`"""
+
+    args = command.args
+
+    if not args:
+        await message.reply(i18n.get('empty_unban_answer'))
+        return
+
+    arg_user = args.split()[0].strip()
+
+    if arg_user.isdigit():
+        banned_status = await get_user_banned_status_by_id(
+            conn,
+            user_id=int(arg_user)
+        )
+    elif arg_user.startswith('@'):
+        banned_status = await get_user_banned_status_by_username(
+            conn,
+            username=arg_user[1:]
+        )
+    else:
+        await message.reply(text=i18n.get('incorrect_unban_arg'))
+        return
+
+    if banned_status is None:
+        await message.reply(text=i18n.get('no_user'))
+    elif banned_status:
+        if arg_user.isdigit():
+            await change_user_banned_status_by_id(
+                conn,
+                banned=False,
+                user_id=int(arg_user)
+            )
+        else:
+            await change_user_banned_status_by_username(
+                conn,
+                banned=False,
+                username=arg_user[1:]
+            )
+        await message.reply(text=i18n.get('successfully_unbanned'))
+
+    await message.reply(text=i18n.get('not_banned'))
