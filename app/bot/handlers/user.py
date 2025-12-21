@@ -79,3 +79,10 @@ async def process_start_command(
 
     await message.answer(text=i18n.get("/start"))
     await state.clear()
+
+
+@router.message(Command(commands='help'))
+async def process_help_command(message: Message, i18n: dict[str, str]):
+    """Handles `help` command"""
+
+    await message.answer(text=i18n.get("/help"))
