@@ -86,3 +86,18 @@ async def process_help_command(message: Message, i18n: dict[str, str]):
     """Handles `help` command"""
 
     await message.answer(text=i18n.get("/help"))
+
+
+@router.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=KICKED))
+async def process_user_blocked_bot(
+        event: ChatMemberUpdated,
+        conn: AsyncConnection
+):
+    """Handles blocking the bot by user"""
+
+    logger.info("User %d has blocked the bot", event.from_user.id)
+    await change_user_alive_status(
+        conn,
+        is_alive=False,
+        user_id=event.from_user.id
+    )
