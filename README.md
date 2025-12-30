@@ -22,12 +22,12 @@ and **admin tools** for moderation and user analytics.
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/kmsint/aiogram3_stepik_course.git
+    git clone https://github.com/rivka-levit/echo-bot-db.git
     ```
 2. Move to the db_echo_bot folder:
 
     ```bash
-    cd aiogram3_stepik_course/db_echo_bot
+    cd echo-bot-db
     ```
 
 3. Create **.env** file and copy the code from **.env.example** file into it.
