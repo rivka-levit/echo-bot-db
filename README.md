@@ -21,14 +21,14 @@ and **admin tools** for moderation and user analytics.
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/kmsint/aiogram3_stepik_course.git
-```
+    ```bash
+    git clone https://github.com/kmsint/aiogram3_stepik_course.git
+    ```
 2. Move to the db_echo_bot folder:
 
-```bash
-cd aiogram3_stepik_course/db_echo_bot
-```
+    ```bash
+    cd aiogram3_stepik_course/db_echo_bot
+    ```
 
 3. Create **.env** file and copy the code from **.env.example** file into it.
 
@@ -36,29 +36,29 @@ cd aiogram3_stepik_course/db_echo_bot
 
 5. Launch containers with Postgres, Redis, and pgAdmin with the command (You need docker and docker-compose installed on your local machine):
 
-```bash
-docker compose up -d
-```
+    ```bash
+    docker compose up -d
+    ```
 
 6. Create a virtual environment in the project root and activate it.
 
 7. Install the required libraries in the virtual environment with `pip`:
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 8. Apply database migrations using the command:
 
-```bash
-python3 -m migrations.create_tables
-```
+    ```bash
+    python3 -m migrations.create_tables
+    ```
 
-7. Run main.py to launch the bot:
+9. Run main.py to launch the bot:
 
-```bash
-python3 main.py
-```
+    ```bash
+    python3 main.py
+    ```
 
 ## Bot Behavior
 
